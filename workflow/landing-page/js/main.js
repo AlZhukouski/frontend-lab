@@ -1,11 +1,11 @@
 const searchButton = document.querySelector(".navigation__btn--search"),
-    searchOverlay = document.querySelector(".search");
-searchCloseButton = document.querySelector(".search__close-btn");
+    searchOverlay = document.querySelector(".search"),
+    searchCloseButton = document.querySelector(".search__close-btn");
 
 searchButton && searchOverlay && searchButton.addEventListener("click", () => {
     searchOverlay.classList.add("active");
 });
-searchCloseButton&&searchCloseButton.addEventListener("click", () => {
+searchCloseButton && searchCloseButton.addEventListener("click", () => {
     searchOverlay.classList.remove("active");
 });
 
@@ -97,7 +97,7 @@ function createGiphyCard(item) {
     giphyFlex.appendChild(card);
 }
 
-function handleWidthChange (width) {
+function handleWidthChange(width) {
     /* console.log(width);*/
 }
 
