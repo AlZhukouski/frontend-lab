@@ -30,10 +30,10 @@ function handleForm(event) {
     event.preventDefault();
 }
 submit.addEventListener("click", clickButton);
+const result = Cacher.withCache(factorial);
 function clickButton() {
     if (inputValue.value && inputValue.value <= 7000000) {
         const listItem = document.createElement("li");
-        let result = Cacher.withCache(factorial);
         listItem.innerHTML = result(inputValue.value);
         ol.appendChild(listItem);
     }
