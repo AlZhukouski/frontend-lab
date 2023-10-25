@@ -4,20 +4,18 @@ const form = document.getElementById("form");
 const inputValue = document.getElementById("input");
 
 class Cacher {
-    static cache = {};
-
     constructor(value) {
         this.value = value;
         return Cacher.withCache(value);
     }
-
     static withCache(value) {
-        function saveCache(i) {
-            if (Cacher.cache.hasOwnProperty(i)) {
-                return Cacher.cache[i];
+        let cache = {};
+        function saveCache(...i) {
+            if (cache.hasOwnProperty(i)) {
+                return cache[i];
             }
-            Cacher.cache[i] = value(i);
-            return Cacher.cache[i];
+            cache[i] = value(...i);
+            return cache[i];
         }
         return saveCache;
     }
