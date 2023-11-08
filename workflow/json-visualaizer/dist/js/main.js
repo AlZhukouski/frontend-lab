@@ -1,1 +1,128 @@
-(()=>{var t={273:()=>{function t(e){return t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},t(e)}function e(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var n=null==t?null:"undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(null!=n){var r,o,a,c,u=[],i=!0,l=!1;try{if(a=(n=n.call(t)).next,0===e){if(Object(n)!==n)return;i=!1}else for(;!(i=(r=a.call(n)).done)&&(u.push(r.value),u.length!==e);i=!0);}catch(t){l=!0,o=t}finally{try{if(!i&&null!=n.return&&(c=n.return(),Object(c)!==c))return}finally{if(l)throw o}}return u}}(t,e)||function(t,e){if(t){if("string"==typeof t)return n(t,e);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(t):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?n(t,e):void 0}}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function n(t,e){(null==e||e>t.length)&&(e=t.length);for(var n=0,r=new Array(e);n<e;n++)r[n]=t[n];return r}var r=document.querySelector(".json__input"),o=document.querySelector(".json__output");function a(n,r){var o,u=document.createElement("div");return u.className="obj__stroke"+("object"===t(r)?" accordion":""),u.addEventListener("click",(function(){event.stopPropagation(),this.classList.toggle("open")})),u.appendChild(function(t){var e=document.createElement("span");return e.className="obj__key",e.textContent=t,e}(n)),u.appendChild(((o=document.createElement("span")).className="obj__colon",o.textContent=" : ",o)),u.appendChild(function(n,r){switch(t(n)){case"string":return function(t){var e=document.createElement("span");return e.className="obj__string",e.textContent=t,e}(n);case"number":return function(t){var e=document.createElement("span");return e.className="obj__number",e.textContent=t,e}(n);case"boolean":return function(t){var e=document.createElement("span");return e.className="obj__boolean",e.textContent=t,e}(n);case"object":return function(t,n){document.createElement("div"),n.appendChild(c(Array.isArray(t)?"[":"{")),n.appendChild(function(t){var e=document.createElement("span");e.className="obj__count";var n,r="";return Array.isArray(t)?(r="item",n=t.length):(r="prop",n=Object.keys(t).length),e.textContent=n+" "+r+(n>1?"s":""),e}(t));for(var r=0,o=Object.entries(t);r<o.length;r++){var u=e(o[r],2),i=u[0],l=u[1];n.appendChild(a(i,l))}return n.appendChild(c(Array.isArray(t)?"]":"}"))}(n,r)}}(r,u)),u}function c(t){var e=document.createElement("span");return e.className="obj__bracket",e.textContent=t,e}document.querySelector(".json__button").addEventListener("click",(function(){var t=r.value;if(function(t){try{JSON.parse(t)}catch(t){return!1}return!0}(t)){var n=JSON.parse(t);o.innerHTML="";for(var c=0,u=Object.entries(n);c<u.length;c++){var i=e(u[c],2),l=i[0],s=i[1];o.appendChild(a(l,s))}}else o.innerHTML="Not Valid json string"}))}},e={};function n(r){var o=e[r];if(void 0!==o)return o.exports;var a=e[r]={exports:{}};return t[r](a,a.exports,n),a.exports}(()=>{"use strict";n(273)})()})();
+const inputField = document.querySelector(".json__input");
+const jsonOutput = document.querySelector(".json__output");
+const button = document.querySelector(".json__button");
+
+button.addEventListener("click", () => {
+    const jsonString = inputField.value;
+    if (isJsonString(jsonString)) {
+        const jsonObj = JSON.parse(jsonString);
+        jsonOutput.innerHTML = "";
+        for (const [key, value] of Object.entries(jsonObj)) {
+            jsonOutput.appendChild(renderStroke(key, value));
+        }
+    } else {
+        jsonOutput.innerHTML = "Not Valid json string";
+    }
+
+});
+
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function renderStroke(key, value) {
+    const objStroke = document.createElement("div");
+    objStroke.className = "obj__stroke" + (typeof (value) === "object" ? " accordion" : "");
+    objStroke.addEventListener("click", function () {
+        event.stopPropagation();
+        this.classList.toggle("open");
+    });
+    objStroke.appendChild(renderObjKey(key));
+    objStroke.appendChild(renderColon());
+    objStroke.appendChild(renderObjValue(value, objStroke));
+    return objStroke;
+}
+
+function renderObjKey(value) {
+    const objKey = document.createElement("span");
+    objKey.className = "obj__key";
+    objKey.textContent = value;
+    return objKey;
+}
+
+function renderColon() {
+    const colon = document.createElement("span");
+    colon.className = "obj__colon";
+    colon.textContent = " : ";
+    return colon;
+}
+
+function renderBracket(value) {
+    const bracket = document.createElement("span");
+    bracket.className = "obj__bracket";
+    bracket.textContent = value;
+    return bracket;
+}
+
+function renderCount(value) {
+    const count = document.createElement("span");
+    count.className = "obj__count";
+    let name = "";
+    let length;
+    if (Array.isArray(value)) {
+        name = "item";
+        length = value.length;
+    } else {
+        name = "prop";
+        length = Object.keys(value).length;
+    }
+    count.textContent = length + " " + name + (length > 1 ? "s" : "");
+    return count;
+}
+
+function renderObjValue(value, parentNode) {
+    switch (typeof (value)) {
+        case "string" :
+            return renderString(value);
+            break;
+        case "number":
+            return renderNumber(value);
+            break;
+        case "boolean":
+            return renderBoolean(value);
+            break;
+        case "object":
+            return renderObject(value, parentNode);
+            break;
+    }
+}
+
+
+function renderString(value) {
+    const valueString = document.createElement("span");
+    valueString.className = "obj__string";
+    valueString.textContent = value;
+    return valueString;
+}
+
+function renderNumber(value) {
+    const valueNumber = document.createElement("span");
+    valueNumber.className = "obj__number";
+    valueNumber.textContent = value;
+    return valueNumber;
+}
+
+function renderBoolean(value) {
+    const valueBoolean = document.createElement("span");
+    valueBoolean.className = "obj__boolean";
+    valueBoolean.textContent = value;
+    return valueBoolean;
+}
+
+
+//isArray() check
+function renderObject(obj, parentNode) {
+    //objStroke.appendChild(renderBracket('['));
+    const object = document.createElement("div");
+    parentNode.appendChild(renderBracket(Array.isArray(obj) ? "[" : "{"));
+    parentNode.appendChild(renderCount(obj));
+    for (const [key, value] of Object.entries(obj)) {
+        parentNode.appendChild(renderStroke(key, value));
+    }
+    return parentNode.appendChild(renderBracket(Array.isArray(obj) ? "]" : "}"));
+}
