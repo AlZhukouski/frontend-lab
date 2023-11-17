@@ -24,13 +24,23 @@ function isJsonString(str) {
     return true;
 }
 
+function addAccordionClass(value) {
+    if (typeof (value) === "object") {
+        return value != null ? " accordion" : "";
+    }
+    return ""
+}
+
 function renderStroke(key, value) {
     const objStroke = document.createElement("div");
-    objStroke.className = "obj__stroke" + (typeof (value) === "object" && value != null ? " accordion" : "");
-    objStroke.addEventListener("click", function () {
-        event.stopPropagation();
-        this.classList.toggle("open");
+    objStroke.className = "obj__stroke" + addAccordionClass(value);
+    objStroke.addEventListener("click", {
+        handleEvent: function (event) {
+            this.classList.toggle("open");
+            event.stopPropagation();
+        }.bind(objStroke)
     });
+
     objStroke.appendChild(renderPrimitiveType("span", "obj__key", key));
     objStroke.appendChild(renderPrimitiveType("span", "obj__colon", " : "));
     objStroke.appendChild(renderObjValue(value, objStroke));
@@ -48,7 +58,6 @@ function renderObjValue(value, parentNode) {
     switch (typeof (value)) {
         case "object":
             if (value == null) {
-                console.log(value == null);
                 return renderPrimitiveType("span", "obj__null", "null");
             } else {
                 return renderObject(value, parentNode);
@@ -58,27 +67,29 @@ function renderObjValue(value, parentNode) {
     }
 }
 
-function renderObject(obj, parentNode) {
-    parentNode.appendChild(renderPrimitiveType("span", "obj__bracket", Array.isArray(obj) ? "[" : "{"));
-    parentNode.appendChild(renderCount(obj));
-    Object.entries(obj).forEach(([key, value]) => {
+function renderObject(objectToRender, parentNode) {
+    let firstBracket = Array.isArray(objectToRender) ? "[" : "{";
+    let lastBracket = Array.isArray(objectToRender) ? "]" : "}";
+    parentNode.appendChild(renderPrimitiveType("span", "obj__bracket", firstBracket));
+    parentNode.appendChild(renderObjectLength(objectToRender));
+    Object.entries(objectToRender).forEach(([key, value]) => {
         parentNode.appendChild(renderStroke(key, value));
     });
-    return parentNode.appendChild(renderPrimitiveType("span", "obj__bracket", Array.isArray(obj) ? "]" : "}"));
+    return parentNode.appendChild(renderPrimitiveType("span", "obj__bracket", lastBracket));
 }
 
-function renderCount(value) {
-    const count = document.createElement("span");
-    count.className = "obj__count";
-    let name = "";
-    let length;
+function renderObjectLength(value) {
+    const element = document.createElement("span");
+    element.className = "obj__count";
+    let propertyName = "";
+    let objectLength;
     if (Array.isArray(value)) {
-        name = "item";
-        length = value.length;
+        propertyName = "item";
+        objectLength = value.length;
     } else {
-        name = "prop";
-        length = Object.keys(value).length;
+        propertyName = "prop";
+        objectLength = Object.keys(value).length;
     }
-    count.textContent = length + " " + name + (length > 1 ? "s" : "");
-    return count;
+    element.textContent = objectLength + " " + propertyName + (objectLength > 1 ? "s" : "");
+    return element;
 }
